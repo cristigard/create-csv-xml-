@@ -1,0 +1,30 @@
+import csv
+from django.utils.encoding import smart_str
+
+
+def download_csv_data(request):
+	# response content type
+	response = HttpResponse(content_type='text/csv')
+	#decide the file name
+	response['Content-Disposition'] = 'attachment; filename="ThePythonDjango.csv"'
+
+	writer = csv.writer(response, csv.excel)
+	response.write(u'\ufeff'.encode('utf8'))
+
+	#write the headers
+	writer.writerow([
+		smart_str(u"Event Name"),
+		smart_str(u"Start Date"),
+		smart_str(u"End Date"),
+		smart_str(u"Notes"),
+	])
+	#get data from database or from text file....
+	events = event_services.get_events_by_year(year) #dummy function to fetch data
+	for event in events:
+		writer.writerow([
+			smart_str(event.name),
+			smart_str(event.start_date_time),
+			smart_str(event.end_date_time),
+			smart_str(event.notes),
+		])
+	return response
